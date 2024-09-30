@@ -23,7 +23,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="bg-background min-h-screen">
               <Navbar />
-              <main className="container mx-auto px-4 py-8">{children}</main>
+              {children}
             </div>
           </ThemeProvider>
         </body>
