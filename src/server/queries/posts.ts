@@ -1,7 +1,7 @@
 "use server";
 
-import { desc } from "drizzle-orm";
-import { posts } from "../db/schema";
+import { count, desc, eq } from "drizzle-orm";
+import { comments, posts } from "../db/schema";
 import { db } from "../db";
 import { uploadMedia } from "@/lib/upload-media";
 import { revalidatePath } from "next/cache";
@@ -21,8 +21,11 @@ export async function getAllPosts() {
         mediaUrl: posts.mediaUrl,
         createdAt: posts.createdAt,
         updatedAt: posts.updatedAt,
+        commentCount: count(comments.id),
       })
       .from(posts)
+      .leftJoin(comments, () => eq(posts.id, comments.postId))
+      .groupBy(posts.id)
       .orderBy(desc(posts.upvotes));
 
     return allPosts;
@@ -112,5 +115,36 @@ export async function createPost(
       errors: { title: ["Failed to create post"] },
       message: "Failed to create post",
     };
+  }
+}
+
+export async function getPostById(id: number) {
+  try {
+    const [postResult] = await db
+      .select()
+      .from(posts)
+      .where(eq(posts.id, id))
+      .limit(1);
+
+    if (!postResult) {
+      return null;
+    }
+
+    const result = await db
+      .select({
+        comments,
+      })
+      .from(comments)
+      .where(eq(comments.postId, id));
+
+    return {
+      ...postResult,
+      comments: result.map((c) => ({
+        ...c.comments,
+      })),
+    };
+  } catch (error) {
+    console.error(`Error fetching post with id ${id}:`, error);
+    return null;
   }
 }
