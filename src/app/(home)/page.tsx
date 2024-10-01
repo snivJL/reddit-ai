@@ -14,8 +14,8 @@ export default async function HomePage({
   }
 
   return (
-    <main className="mx-auto w-8/12">
-      <div className="flex items-center justify-between py-4">
+    <main className="mx-auto w-8/12 py-4">
+      <div className="flex items-center justify-between pb-4">
         <h1 className="text-3xl font-bold">Popular Posts</h1>
       </div>
       <div className="flex flex-col gap-4">

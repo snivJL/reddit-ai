@@ -1,7 +1,7 @@
 "use server";
 
 import { count, desc, eq, ilike } from "drizzle-orm";
-import { comments, posts } from "../db/schema";
+import { comments, type InsertPost, posts } from "../db/schema";
 import { db } from "../db";
 import { uploadMedia } from "@/lib/upload-media";
 import { revalidatePath } from "next/cache";
@@ -148,6 +148,77 @@ export async function getPostById(id: number) {
   } catch (error) {
     console.error(`Error fetching post with id ${id}:`, error);
     return null;
+  }
+}
+
+export async function deletePost(id: number) {
+  try {
+    await db.delete(posts).where(eq(posts.id, id));
+    revalidatePath("/");
+  } catch (error) {
+    console.error(`Error deleting post with id ${id}:`, error);
+  }
+}
+
+export async function editPost(
+  prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const postId = formData.get("id");
+  if (!postId || typeof postId !== "string") {
+    return {
+      errors: {},
+      message: "Can't retrieve post id",
+    };
+  }
+
+  const validatedFields = PostSchema.safeParse({
+    title: formData.get("title"),
+    content: formData.get("content"),
+    media: formData.get("media"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: "Please check your inputs",
+    };
+  }
+
+  const { title, content, media } = validatedFields.data;
+
+  try {
+    const updateData: Partial<InsertPost> = { title, content };
+
+    let mediaUrl = null;
+    let mediaType = null;
+
+    if (media && media.size > 0) {
+      try {
+        mediaUrl = await uploadMedia(media);
+        mediaType = media.type.startsWith("image/") ? "image" : "video";
+      } catch (error) {
+        console.error("Error uploading media:", error);
+        return {
+          errors: { media: ["Failed to upload media"] },
+          message: "Failed to upload media",
+        };
+      }
+    }
+
+    await db
+      .update(posts)
+      .set({ ...updateData, mediaUrl, mediaType })
+      .where(eq(posts.id, parseInt(postId, 10)));
+
+    revalidatePath("/");
+    return { errors: null, message: "Post updated successfully" };
+  } catch (error) {
+    console.error(`Error editing post with id ${postId}:`, error);
+    return {
+      errors: null,
+      message: "An error occurred while updating the post",
+    };
   }
 }
 

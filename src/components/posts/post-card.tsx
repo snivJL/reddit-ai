@@ -10,6 +10,7 @@ import { getRelativeTimeString } from "@/lib/dates";
 import UserAvatar from "../user-avatar";
 import ImageBlur from "../image-blur";
 import Markdown from "react-markdown";
+import { PostActionsDropdown } from "./post-actions-dropdown";
 
 type Props = {
   post: SelectPost & { commentCount: number };
@@ -51,11 +52,11 @@ export default async function PostCard({ post }: Props) {
             schema="post"
             userVote={vote?.value}
           />
-
           <Button variant="ghost" className="text-muted-foreground">
             <MessageSquare className="mr-2 h-4 w-4" />
             {post.commentCount || 0} Comments
           </Button>
+          {author.id === user?.id ? <PostActionsDropdown post={post} /> : null}
         </CardFooter>
       </Card>
     </Link>
