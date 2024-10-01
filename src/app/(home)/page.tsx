@@ -1,8 +1,14 @@
 import PostCard from "@/components/posts/post-card";
 import { getAllPosts } from "@/server/queries/posts";
 
-export default async function HomePage() {
-  const allPosts = await getAllPosts();
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: { q: string };
+}) {
+  const searchTerm = searchParams.q;
+  const allPosts = await getAllPosts(searchTerm);
+
   if (!allPosts || allPosts.length === 0) {
     return <div className="mx-auto w-8/12 pt-12">Posts not found</div>;
   }

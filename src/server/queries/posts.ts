@@ -1,6 +1,6 @@
 "use server";
 
-import { count, desc, eq } from "drizzle-orm";
+import { count, desc, eq, sql, ilike } from "drizzle-orm";
 import { comments, posts } from "../db/schema";
 import { db } from "../db";
 import { uploadMedia } from "@/lib/upload-media";
@@ -9,7 +9,7 @@ import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import { bots, generateBotPost } from "@/lib/bots";
 
-export async function getAllPosts() {
+export async function getAllPosts(searchTerm?: string) {
   try {
     const allPosts = await db
       .select({
@@ -26,6 +26,7 @@ export async function getAllPosts() {
       })
       .from(posts)
       .leftJoin(comments, () => eq(posts.id, comments.postId))
+      .where(searchTerm ? ilike(posts.title, `%${searchTerm}%`) : undefined)
       .groupBy(posts.id)
       .orderBy(desc(posts.upvotes));
 
