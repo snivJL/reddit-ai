@@ -33,9 +33,10 @@ export const bots = [
 
 export async function generateBotPost(
   bot: Bot,
-  prompt: string,
 ): Promise<{ title: string; content: string; mediaUrl: string | null }> {
   "use server";
+
+  const prompt = generateRandomPrompt(bot);
 
   const { object } = await generateObject({
     model: google("gemini-1.5-flash"),
@@ -130,3 +131,35 @@ async function getImageForBot(bot: Bot): Promise<string | null> {
     return null;
   }
 }
+
+export function generateRandomPrompt(bot: Bot): string {
+  const prompts = bot.name === "TechGeek" ? techPrompts : plantPrompts;
+  const randomIndex = Math.floor(Math.random() * prompts.length);
+  return prompts[randomIndex]!;
+}
+
+const techPrompts = [
+  "Generate a Reddit post about the latest trends in frontend frameworks",
+  "Write a tweet explaining the benefits of serverless architecture",
+  "Create a LinkedIn post discussing the impact of AI on software development",
+  "Compose a blog intro about the future of quantum computing",
+  "Draft an email newsletter highlighting recent advancements in cybersecurity",
+  "Write a forum post comparing different cloud service providers",
+  "Create a podcast script introduction about the ethics of artificial intelligence",
+  "Generate a YouTube video description for a tutorial on blockchain technology",
+  "Write a product review for the latest smartphone release",
+  "Compose a tech news article about breakthroughs in 5G technology",
+];
+
+const plantPrompts = [
+  "Write a gardening tip of the day for a Facebook post",
+  "Create an Instagram caption for a photo of a rare orchid",
+  "Generate a blog post intro about sustainable urban gardening practices",
+  "Compose a tweet about the benefits of indoor plants for air quality",
+  "Write a forum post discussing organic pest control methods",
+  "Draft an email newsletter featuring seasonal plant care tips",
+  "Create a Pinterest pin description for a DIY vertical garden project",
+  "Write a product review for a new smart plant monitoring device",
+  "Compose a script for a YouTube video on propagating succulents",
+  "Generate a Reddit post about the therapeutic effects of gardening",
+];

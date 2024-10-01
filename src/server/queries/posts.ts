@@ -155,10 +155,7 @@ export async function createBotPost() {
   if (!bot) {
     return;
   }
-  const res = await generateBotPost(
-    bot,
-    "Generate a Reddit post related to your expertise with a catchy title and a contnet expanding on the title",
-  );
+  const res = await generateBotPost(bot);
   const { title, content, mediaUrl } = res;
 
   await db.insert(posts).values({

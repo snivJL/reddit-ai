@@ -24,34 +24,43 @@ const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
 
   const onUpvote = async (e: MouseEvent) => {
     e.preventDefault();
-    setUpvoteState((prevState) => ({
-      ...prevState,
-      userVote: prevState.userVote === 1 ? 0 : 1,
-      upvotes:
-        prevState.userVote === 1
-          ? prevState.upvotes - 1
-          : prevState.upvotes + 2,
-    }));
+
     if (!user?.userId) {
       return;
     }
+    setUpvoteState(({ userVote, upvotes }) => {
+      if (userVote === 1) {
+        // If already upvoted, remove the upvote
+        return { userVote: undefined, upvotes: upvotes - 1 };
+      } else if (userVote === -1) {
+        // If downvoted, change to upvote
+        return { userVote: 1, upvotes: upvotes + (upvotes === -1 ? 2 : 1) };
+      } else {
+        return { userVote: 1, upvotes: upvotes + 1 };
+      }
+    });
     const mutation = schema === "comment" ? upvoteComment : upvotePost;
     await mutation(user?.userId, id);
   };
 
   const onDownvote = async (e: MouseEvent) => {
     e.preventDefault();
-    setUpvoteState((prevState) => ({
-      ...prevState,
-      userVote: prevState.userVote === -1 ? undefined : -1,
-      upvotes:
-        prevState.userVote === -1
-          ? prevState.upvotes + 1
-          : prevState.upvotes - 2,
-    }));
+
     if (!user?.userId) {
       return;
     }
+    setUpvoteState(({ userVote, upvotes }) => {
+      if (userVote === -1) {
+        // If already downvoted, remove the downvote
+        return { userVote: undefined, upvotes: upvotes + 1 };
+      } else if (userVote === 1) {
+        // If upvoted, change to downvote
+        return { userVote: -1, upvotes: upvotes - (upvotes === 1 ? 2 : 1) };
+      } else {
+        // If not voted, add a downvote
+        return { userVote: -1, upvotes: upvotes - 1 };
+      }
+    });
     const mutation = schema === "comment" ? downvoteComment : downvotePost;
     await mutation(user?.userId, id);
   };
