@@ -7,6 +7,7 @@ import { uploadMedia } from "@/lib/upload-media";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
+import { bots, generateBotPost } from "@/lib/bots";
 
 export async function getAllPosts() {
   try {
@@ -147,4 +148,26 @@ export async function getPostById(id: number) {
     console.error(`Error fetching post with id ${id}:`, error);
     return null;
   }
+}
+
+export async function createBotPost() {
+  const bot = bots[Math.floor(Math.random() * bots.length)];
+  if (!bot) {
+    return;
+  }
+  const res = await generateBotPost(
+    bot,
+    "Generate a Reddit post related to your expertise with a catchy title and a contnet expanding on the title",
+  );
+  const { title, content, mediaUrl } = res;
+
+  await db.insert(posts).values({
+    title,
+    content,
+    authorId: bot.userId,
+    ...(mediaUrl && { mediaUrl }),
+    createdAt: new Date(),
+  });
+
+  revalidatePath("/");
 }

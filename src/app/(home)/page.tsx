@@ -3,8 +3,8 @@ import { getAllPosts } from "@/server/queries/posts";
 
 export default async function HomePage() {
   const allPosts = await getAllPosts();
-  if (!allPosts) {
-    return <div>Posts not found</div>;
+  if (!allPosts || allPosts.length === 0) {
+    return <div className="mx-auto w-8/12 pt-12">Posts not found</div>;
   }
 
   return (

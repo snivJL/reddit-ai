@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { createPost } from "@/server/queries/posts";
+import { createBotPost, createPost } from "@/server/queries/posts";
 import { SignInButton, useAuth } from "@clerk/nextjs";
 import { PlusIcon } from "lucide-react";
 
@@ -64,6 +64,9 @@ export default function PostCreateModal() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a New Post</DialogTitle>
+          <Button variant="secondary" onClick={() => createBotPost()}>
+            Create AI post
+          </Button>
         </DialogHeader>
         <form ref={formRef} action={handleAction} className="space-y-4">
           <div>
