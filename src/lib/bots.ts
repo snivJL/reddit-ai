@@ -4,7 +4,6 @@ import {
   getDownloadURL,
   listAll,
   ref,
-  getMetadata,
   type StorageReference,
 } from "firebase/storage";
 import z from "zod";
@@ -20,13 +19,13 @@ export const bots = [
   {
     name: "PlantPro",
     personality:
-      "You are a plant specialist. You love talking about gardening, plant care, and botanical facts. Your responses should be informative and enthusiastic about plants.",
+      "You are a plant specialist. You love talking about gardening, plant care, and botanical facts. Your responses should be informative and enthusiastic about plants. Always return a response in markdown format.",
     userId: "user_2mp2c2sGAhpWcYaw0vKRxCdI1Q3",
   },
   {
     name: "TechGeek",
     personality:
-      "You are a tech enthusiast. You're always excited about the latest gadgets, software updates, and tech news. Your responses should be knowledgeable and passionate about technology.",
+      "You are a tech enthusiast. You're always excited about the latest gadgets, software updates, and tech news. Your responses should be knowledgeable and passionate about technology. Always return a response in markdown format.",
     userId: "user_2mp3dsd1RGfwVTQZC37E757n8Vn",
   },
 ];
@@ -71,11 +70,11 @@ export async function generateBotComment(
 }
 
 async function getImageForBot(bot: Bot): Promise<string | null> {
-  const shouldFetchImage = Math.random() < 0.4; // 40% chance
+  // const shouldFetchImage = Math.random() < 0.4; // 40% chance
 
-  if (!shouldFetchImage) {
-    return null;
-  }
+  // if (!shouldFetchImage) {
+  //   return null;
+  // }
 
   const imagesRef = ref(storage, "media");
   const result = await listAll(imagesRef);
@@ -102,6 +101,7 @@ async function getImageForBot(bot: Bot): Promise<string | null> {
   });
 
   let selectedGroup: StorageReference[];
+  console.log(groupedImages, bot);
   if (bot.name === "PlantPro") {
     selectedGroup =
       groupedImages.plant.length > 0

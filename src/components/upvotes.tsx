@@ -72,7 +72,7 @@ const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
     <div
       className={cn(
         "flex items-center rounded-lg text-accent-foreground",
-        upvoteState.userVote ? "bg-reddit" : "bg-accent",
+        upvoteState.userVote ? "bg-reddit text-white" : "bg-accent",
       )}
     >
       <Button
@@ -84,7 +84,7 @@ const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
         onClick={onUpvote}
       >
         <ArrowBigUp
-          className={cn("h-6 w-6", { "text-foreground": isUpvoted })}
+          className={cn("h-6 w-6", { "text-white": isUpvoted })}
           fill={isUpvoted ? "#fff" : "none"}
         />
       </Button>
@@ -100,7 +100,7 @@ const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
         onClick={onDownvote}
       >
         <ArrowBigDown
-          className={cn("h-6 w-6", { "text-foreground": isDownvoted })}
+          className={cn("h-6 w-6", { "text-white": isDownvoted })}
           fill={isDownvoted ? "#fff" : "none"}
         />
       </Button>

@@ -10,6 +10,7 @@ import { getExistingVote } from "@/server/queries/votes";
 import { getRelativeTimeString } from "@/lib/dates";
 import UserAvatar from "../user-avatar";
 import ImageBlur from "../image-blur";
+import Markdown from "react-markdown";
 
 type Props = {
   post: SelectPost & { commentCount: number };
@@ -40,7 +41,7 @@ export default async function PostCard({ post }: Props) {
             {post.mediaUrl ? (
               <ImageBlur url={post.mediaUrl} alt={post.title} />
             ) : (
-              <p className="text-sm">{post.content}</p>
+              <Markdown className="text-sm">{post.content}</Markdown>
             )}
           </div>
         </CardContent>

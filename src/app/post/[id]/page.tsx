@@ -1,4 +1,5 @@
 import { getPostById } from "@/server/queries/posts";
+import Markdown from "react-markdown";
 
 import Link from "next/link";
 import Upvotes from "@/components/upvotes";
@@ -50,7 +51,7 @@ export default async function PostCard({ params }: { params: { id: string } }) {
         </div>
       </div>
       {post.mediaUrl && <ImageBlur url={post.mediaUrl} alt={post.title} />}
-      <p className="py-2 text-sm">{post.content}</p>
+      <Markdown className="py-2 text-sm">{post.content}</Markdown>
       <CommentToolbar>
         <Upvotes
           upvotes={post.upvotes ?? 0}

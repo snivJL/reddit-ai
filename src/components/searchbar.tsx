@@ -31,7 +31,6 @@ const Searchbar = () => {
         placeholder="Search..."
         className="w-64 pl-8"
       />
-      {searchTerm}
     </div>
   );
 };
