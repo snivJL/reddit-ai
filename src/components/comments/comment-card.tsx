@@ -9,11 +9,10 @@ import UserAvatar from "../user-avatar";
 
 type Props = {
   comment: CommentWithReplies;
-  isReply?: boolean;
   depth?: number;
 };
 
-const CommentCard = async ({ comment, isReply, depth = 0 }: Props) => {
+const CommentCard = async ({ comment, depth = 0 }: Props) => {
   const [author, user] = await Promise.all([
     clerkClient.users.getUser(comment.authorId),
     currentUser(),
@@ -52,7 +51,7 @@ const CommentCard = async ({ comment, isReply, depth = 0 }: Props) => {
       </div>
 
       {comment.replies?.map((reply) => (
-        <CommentCard key={reply.id} comment={reply} isReply depth={depth + 1} />
+        <CommentCard key={reply.id} comment={reply} depth={depth + 1} />
       ))}
     </div>
   );

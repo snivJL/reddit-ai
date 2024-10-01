@@ -2,7 +2,6 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import type { SelectPost } from "@/server/db/schema";
 import Upvotes from "../upvotes";

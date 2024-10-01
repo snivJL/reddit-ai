@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Params = {
   searchTerm: string;
@@ -15,7 +15,7 @@ const useDebounce = ({ searchTerm, delay = 300 }: Params) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [searchTerm]);
+  }, [delay, searchTerm]);
 
   return debouncedSearchTerm;
 };

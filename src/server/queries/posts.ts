@@ -1,6 +1,6 @@
 "use server";
 
-import { count, desc, eq, sql, ilike } from "drizzle-orm";
+import { count, desc, eq, ilike } from "drizzle-orm";
 import { comments, posts } from "../db/schema";
 import { db } from "../db";
 import { uploadMedia } from "@/lib/upload-media";

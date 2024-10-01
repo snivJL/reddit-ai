@@ -13,13 +13,12 @@ const Searchbar = () => {
   const debouncedSearchTerm = useDebounce({ searchTerm });
 
   useEffect(() => {
-    console.log(debouncedSearchTerm);
     if (!isEmptyOrWhitespace(searchTerm)) {
       router.push(`/?q=${debouncedSearchTerm}`);
     } else {
       router.push("/");
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, router, searchTerm]);
 
   return (
     <div className="relative">

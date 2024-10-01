@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { db } from "../db";
-import { comments, CommentWithReplies } from "../db/schema";
+import { comments, type CommentWithReplies } from "../db/schema";
 import { desc, eq } from "drizzle-orm";
 
 export async function addComment(
