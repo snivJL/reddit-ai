@@ -1,9 +1,7 @@
 "use server";
 
-import type { CommentWithReplies, SelectComment } from "@/server/db/schema";
+import type { CommentWithReplies } from "@/server/db/schema";
 import CommentCard from "./comment-card";
-import CommentAdd from "./comment-add";
-import CommentToolbar from "./comment-toolbar";
 
 type Props = {
   comments: CommentWithReplies[] | null;
@@ -16,7 +14,6 @@ const CommentList = ({ comments }: Props) => {
 
   return (
     <>
-      <CommentToolbar />
       <div className="flex flex-col gap-4">
         {comments.map((comment) => (
           <CommentCard key={comment.id} comment={comment} />

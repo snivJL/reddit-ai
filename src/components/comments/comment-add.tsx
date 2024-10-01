@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { useAuth } from "@clerk/nextjs";
 import { useParams } from "next/navigation";
 import { addComment, addCommentReply } from "@/server/queries/comments";
+import { isEmptyOrWhitespace } from "@/lib/form";
 
 type Props = {
   parentId?: number;
@@ -45,12 +46,15 @@ const CommentAdd = ({ parentId, onSuccess }: Props) => {
         <CardContent>
           <form onSubmit={handleCommentSubmit} className="space-y-4">
             <Textarea
+              className="w-full border-none"
               placeholder="What are your thoughts?"
               value={commentContent}
               onChange={(e) => setCommentContent(e.target.value)}
-              className="w-full"
             />
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || isEmptyOrWhitespace(commentContent)}
+            >
               {isSubmitting ? "Submitting..." : "Comment"}
             </Button>
           </form>

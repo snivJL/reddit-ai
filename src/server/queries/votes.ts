@@ -1,7 +1,6 @@
 "use server";
 
 import { and, eq, sql } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { comments, posts, votes } from "../db/schema";
 import { db } from "../db";
 import type { VoteDirection } from "@/types";
@@ -82,7 +81,6 @@ async function updateVotableUpvotes(
   if (!updated) {
     return 0;
   }
-  revalidatePath(`/post/${updated.pathId}`);
   return updated?.upvotes ?? 0;
 }
 

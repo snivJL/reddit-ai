@@ -5,7 +5,7 @@ import { comments, posts } from "../db/schema";
 import { db } from "../db";
 import { uploadMedia } from "@/lib/upload-media";
 import { revalidatePath } from "next/cache";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 
 export async function getAllPosts() {
@@ -56,9 +56,9 @@ export async function createPost(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const user = await currentUser();
+  const { userId } = auth();
 
-  if (!user?.id) {
+  if (!userId) {
     return {
       errors: { title: ["Authentication required"] },
       message: "You must be logged in to create a post",
@@ -102,7 +102,7 @@ export async function createPost(
       content,
       mediaUrl,
       mediaType,
-      authorId: user.id,
+      authorId: userId,
       createdAt: new Date(),
       updatedAt: new Date(),
     });

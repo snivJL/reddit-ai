@@ -3,11 +3,7 @@ import CommentList from "./comment-list";
 
 const CommentSection = async ({ postId }: { postId: number }) => {
   const commentsWithReplies = await getCommentsWithReplies(postId);
-  return (
-    <div>
-      <CommentList comments={commentsWithReplies} />{" "}
-    </div>
-  );
+  return <CommentList comments={commentsWithReplies} />;
 };
 
 export default CommentSection;

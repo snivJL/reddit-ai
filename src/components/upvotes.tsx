@@ -9,6 +9,7 @@ import {
   upvotePost,
 } from "@/server/queries/votes";
 import { useAuth } from "@clerk/nextjs";
+import { useState, type MouseEvent } from "react";
 
 type Props = {
   upvotes: number;
@@ -19,8 +20,18 @@ type Props = {
 
 const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
   const user = useAuth();
+  const [upvoteState, setUpvoteState] = useState({ upvotes, userVote });
 
-  const onUpvote = async () => {
+  const onUpvote = async (e: MouseEvent) => {
+    e.preventDefault();
+    setUpvoteState((prevState) => ({
+      ...prevState,
+      userVote: prevState.userVote === 1 ? 0 : 1,
+      upvotes:
+        prevState.userVote === 1
+          ? prevState.upvotes - 1
+          : prevState.upvotes + 2,
+    }));
     if (!user?.userId) {
       return;
     }
@@ -28,7 +39,16 @@ const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
     await mutation(user?.userId, id);
   };
 
-  const onDownvote = async () => {
+  const onDownvote = async (e: MouseEvent) => {
+    e.preventDefault();
+    setUpvoteState((prevState) => ({
+      ...prevState,
+      userVote: prevState.userVote === -1 ? undefined : -1,
+      upvotes:
+        prevState.userVote === -1
+          ? prevState.upvotes + 1
+          : prevState.upvotes - 2,
+    }));
     if (!user?.userId) {
       return;
     }
@@ -36,19 +56,43 @@ const Upvotes = ({ upvotes, userVote, schema, id }: Props) => {
     await mutation(user?.userId, id);
   };
 
+  const isUpvoted = upvoteState.userVote === 1;
+  const isDownvoted = upvoteState.userVote === -1;
+
   return (
-    <div className="flex flex-col items-center space-y-2">
-      <Button variant="ghost" size="icon" onClick={onUpvote}>
+    <div
+      className={cn(
+        "flex items-center rounded-lg text-accent-foreground",
+        upvoteState.userVote ? "bg-reddit" : "bg-accent",
+      )}
+    >
+      <Button
+        className={cn(
+          isUpvoted ? "hover:bg-accent/40" : "hover:bg-foreground/10",
+        )}
+        variant="ghost"
+        size="icon"
+        onClick={onUpvote}
+      >
         <ArrowBigUp
-          className={cn("h-6 w-6", { "text-reddit": userVote === 1 })}
-          fill={userVote === 1 ? "#D93900" : "currentColor"}
+          className={cn("h-6 w-6", { "text-foreground": isUpvoted })}
+          fill={isUpvoted ? "#fff" : "none"}
         />
       </Button>
-      <span className="font-bold">{upvotes}</span>
-      <Button variant="ghost" size="icon" onClick={onDownvote}>
+      <span className="grid min-w-3 place-items-center text-sm">
+        {upvoteState.upvotes}
+      </span>
+      <Button
+        className={cn(
+          isDownvoted ? "hover:bg-accent/40" : "hover:bg-foreground/10",
+        )}
+        variant="ghost"
+        size="icon"
+        onClick={onDownvote}
+      >
         <ArrowBigDown
-          className={cn("h-6 w-6", { "text-reddit": userVote === -1 })}
-          fill={userVote === -1 ? "#D93900" : "currentColor"}
+          className={cn("h-6 w-6", { "text-foreground": isDownvoted })}
+          fill={isDownvoted ? "#fff" : "none"}
         />
       </Button>
     </div>

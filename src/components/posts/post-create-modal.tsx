@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import {
   Dialog,
@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { createPost } from "@/server/queries/posts";
+import { SignInButton, useAuth } from "@clerk/nextjs";
+import { PlusIcon } from "lucide-react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -30,20 +32,34 @@ export default function PostCreateModal() {
     errors: null,
     message: "",
   });
+  const user = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const handleAction = async (formData: FormData) => {
+  const handleAction = (formData: FormData) => {
     formAction(formData);
-    if (state.errors === null && !state.message.includes("Failed")) {
-      setIsOpen(false);
-      if (formRef.current) formRef.current.reset();
-    }
   };
+
+  useEffect(() => {
+    if (state.message && !state.errors) {
+      setIsOpen(false);
+      if (formRef.current) {
+        formRef.current.reset();
+      }
+    }
+  }, [state]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button>Create Post</Button>
+      <DialogTrigger asChild className="min-w-20">
+        {user.isSignedIn ? (
+          <Button variant="ghost">
+            <PlusIcon /> Create Post
+          </Button>
+        ) : (
+          <SignInButton>
+            <Button>Create Post</Button>
+          </SignInButton>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -51,13 +67,13 @@ export default function PostCreateModal() {
         </DialogHeader>
         <form ref={formRef} action={handleAction} className="space-y-4">
           <div>
-            <Input name="title" placeholder="Title" required />
+            <Input name="title" placeholder="Title" />
             {state.errors?.title && (
               <p className="text-sm text-red-500">{state.errors.title[0]}</p>
             )}
           </div>
           <div>
-            <Textarea name="content" placeholder="Content" required />
+            <Textarea name="content" placeholder="Content" />
             {state.errors?.content && (
               <p className="text-sm text-red-500">{state.errors.content[0]}</p>
             )}
